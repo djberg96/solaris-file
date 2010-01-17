@@ -1,0 +1,9 @@
+* CHANGES
+* MANIFEST
+* README
+* Rakefile
+* solaris-file.gemspec
+* examples/example_solaris_file.rb
+* ext/solaris/sfile.c
+* ext/solaris/sfile.h
+* test/test_solaris_file.rb
