@@ -1,3 +1,9 @@
+== 0.3.6 - 12-Dec-2010
+* Fixed a warning regarding an unused variable.
+* Fixed a potential bug with an internal helper function's switch statement.
+* Refactored the Rakefile and the gemspec. 
+* Updated the installation instructions in the README.
+
 == 0.3.5 - 28-Aug-2009
 * Changed the license to Artistic 2.0.
 * Added test-unit 2.x and sys-filesystem as development dependencies.

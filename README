@@ -1,51 +1,45 @@
 == Description
-   Adds ACL support and door methods for the File class on Solaris.
-
-== Prerequisites
-   Ruby 1.8.x
+  Adds ACL support and door methods for the File class on Solaris.
 
 == Installation
-=== Gem Installation
-   gem install solaris-file
-=== Local Installation
-   rake install
+  gem install solaris-file
 
 == Synopsis
-   require 'solaris/file'
+  require 'solaris/file'
    
-   f = 'some_file.txt'
-   acl_text = "user::rw-,user:nobody:r--,group::r--,group:sys:r--,mask:r--,other:r--"
+  file = 'some_file.txt'
+  acl_text = "user::rw-,user:nobody:r--,group::r--,group:sys:r--,mask:r--,other:r--"
    
-   File.trivial?(f) # => true (probably)
-   File.acl_write_text(acl_text)
+  File.trivial?(file) # => true (probably)
+  File.acl_write_text(acl_text)
    
-   # No longer a trivial file
-   File.trivial?(f) # => false
-   File.acl_read(f).each{ |acl| p acl }
+  # No longer a trivial file
+  File.trivial?(file) # => false
+  File.acl_read(file).each{ |acl| p acl }
 
-   # Door file?
-   File.door?("/var/run/syslog_door") # => true
-   File.ftype("/var/run/syslog_door") # => 'door'
+  # Door file?
+  File.door?("/var/run/syslog_door") # => true
+  File.ftype("/var/run/syslog_door") # => 'door'
 
 == Known Bugs
-   None that I am aware of. Please report any bugs using the tracker on the
-   project page at http://www.rubyforge.org/projects/solarisutils
+  None that I am aware of. Please report any bugs using the tracker on the
+  project page at http://www.rubyforge.org/projects/solarisutils
    
 == Future Plans
-   Add acl_write methods that accept an array of ACLStruct's.
-   Add support for extended file attributes.
+  Add acl_write methods that accept an array of ACLStruct's.
+  Add support for extended file attributes.
    
 == Copyright
-   (C) 2005-2009 Daniel J. Berger
-   All Rights Reserved
+  (C) 2005-2010 Daniel J. Berger
+  All Rights Reserved
     
 == Warranty
-   This package is provided "as is" and without any express or
-   implied warranties, including, without limitation, the implied
-   warranties of merchantability and fitness for a particular purpose.
+  This package is provided "as is" and without any express or
+  implied warranties, including, without limitation, the implied
+  warranties of merchantability and fitness for a particular purpose.
 	
 == License
-   Artistic 2.0
+  Artistic 2.0
     
 == Author
-   Daniel J. Berger
+  Daniel J. Berger
