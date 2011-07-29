@@ -457,6 +457,10 @@ void Init_file(){
     rb_eStandardError
   );
 
+  // Remove these methods temporarily to avoid warnings.
+  rb_undef_method(CLASS_OF(rb_cFile), "ftype");
+  rb_undef_method(CLASS_OF(rb_cFile), "realpath");
+
   // Singleton Methods
 
   rb_define_singleton_method(rb_cFile, "acl_count", acl_count, 1);
@@ -489,6 +493,6 @@ void Init_file(){
     "acl_type", "acl_id", "acl_perm", NULL
   );
 
-  /* 0.3.5: The version of the solaris-file library */
+  /* 0.3.7: The version of the solaris-file library */
   rb_define_const(rb_cFile, "SOLARIS_VERSION", rb_str_new2(SOLARIS_VERSION));
 }
