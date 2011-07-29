@@ -1,4 +1,4 @@
-#define SOLARIS_VERSION "0.3.6"
+#define SOLARIS_VERSION "0.3.7"
 #define MAX_STRING 512
 
 VALUE cSolarisFileError;

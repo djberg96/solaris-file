@@ -41,7 +41,7 @@ class TC_Solaris_File < Test::Unit::TestCase
   end
 
   def test_version
-    assert_equal('0.3.6', File::SOLARIS_VERSION)
+    assert_equal('0.3.7', File::SOLARIS_VERSION)
   end
 
   # SINGLETON METHODS
