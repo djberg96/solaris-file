@@ -2,14 +2,13 @@ require 'rubygems'
 
 Gem::Specification.new do |gem|
   gem.name       = 'solaris-file'
-  gem.version    = '0.3.6'
+  gem.version    = '0.3.7'
   gem.author     = 'Daniel J. Berger'
   gem.license    = 'Artistic 2.0'
   gem.email      = 'djberg96@gmail.com'
   gem.homepage   = 'http://www.rubyforge.org/projects/solarisutils'
   gem.platform   = Gem::Platform::RUBY
   gem.summary    = 'ACL and other methods for the File class on Solaris'
-  gem.has_rdoc   = true
   gem.test_file  = 'test/test_solaris_file.rb'
   gem.extensions = ['ext/extconf.rb']
   gem.files      = Dir['**/*'].reject{ |f| f.include?('git') }

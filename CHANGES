@@ -1,3 +1,7 @@
+== 0.3.7 - ???
+* Removed an obsolete gemspec attribute.
+* Fixed redefinition warnings for the ftype and realpath singleton methods.
+
 == 0.3.6 - 12-Dec-2010
 * Fixed a warning regarding an unused variable.
 * Fixed a potential bug with an internal helper function's switch statement.
