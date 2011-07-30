@@ -1,4 +1,4 @@
-== 0.3.7 - ???
+== 0.3.7 - 29-Jul-2011
 * Removed an obsolete gemspec attribute.
 * Fixed redefinition warnings for the ftype and realpath singleton methods.
 
