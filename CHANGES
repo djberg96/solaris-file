@@ -1,3 +1,9 @@
+== 0.4.0 - ???
+* Converted to FFI.
+* Removed the File.realpath method since it is now already defined in
+  Ruby 1.9 and later.
+* Updated the tests and Rakefile.
+
 == 0.3.7 - 29-Jul-2011
 * Removed an obsolete gemspec attribute.
 * Fixed redefinition warnings for the ftype and realpath singleton methods.
