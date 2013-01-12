@@ -1,61 +1,35 @@
 require 'ffi'
+require File.join(File.dirname(__FILE__), 'file', 'stat')
+require File.join(File.dirname(__FILE__), 'file', 'constants')
+require File.join(File.dirname(__FILE__), 'file', 'functions')
 
 class File
-  extend FFI::Library
-  ffi_lib FFI::Library::LIBC
-
-  GETACL = 1
-  SETACL = 2
-  GETACLCNT = 3
-  MIN_ACL_ENTRIES = 4
-
-  USER_OBJ      = (0x01)
-  USER          = (0x02)
-  GROUP_OBJ     = (0x04)
-  GROUP         = (0x08)
-  CLASS_OBJ     = (0x10)
-  OTHER_OBJ     = (0x20)
-  ACL_DEFAULT   = (0x1000)
-  DEF_USER_OBJ  = (ACL_DEFAULT | USER_OBJ)
-  DEF_USER      = (ACL_DEFAULT | USER)
-  DEF_GROUP_OBJ = (ACL_DEFAULT | GROUP_OBJ)
-  DEF_GROUP     = (ACL_DEFAULT | GROUP)
-  DEF_CLASS_OBJ = (ACL_DEFAULT | CLASS_OBJ)
-  DEF_OTHER_OBJ = (ACL_DEFAULT | OTHER_OBJ)
-
-  GRP_ERROR       = 1
-  USER_ERROR      = 2
-  OTHER_ERROR     = 3
-  CLASS_ERROR     = 4
-  DUPLICATE_ERROR = 5
-  MISS_ERROR      = 6
-  MEM_ERROR       = 7
-  ENTRY_ERROR     = 8
-
-  class AclEnt < FFI::Struct
-    layout(:a_type, :int, :a_id, :int, :a_perm, :int)
-  end
-
-  ACLStruct = Struct.new('ACLStruct', :acl_type, :acl_id, :acl_perm)
-
-  attach_function :acl, [:string, :int, :int, :pointer], :int
-  attach_function :facl, [:int, :int, :int, :pointer], :int
-  attach_function :resolvepath_c, :resolvepath, [:string, :pointer, :ulong], :int
-
-  ffi_lib :sec
-
-  attach_function :aclcheck, [:pointer, :int, :pointer], :int
-  attach_function :aclfromtext, [:string, :pointer], :pointer
-  attach_function :acltotext, [:pointer, :int], :string
+  include Solaris::Constants
+  include Solaris::Functions
+  extend Solaris::Functions
 
   # The version of the solaris-file library
   SOLARIS_VERSION = '0.4.0'
 
+  # We redefine the ftype method later.
   class << self
     alias ftype_orig ftype
     remove_method :ftype
   end
 
+  # Reads ACL information for the given file. Returns an array of ACLStruct's
+  # that contain three members each:
+  #
+  # - acl_type (String)
+  # - acl_id   (Integer)
+  # - acl_perm (Integer)
+  #
+  # Example:
+  #
+  #    File.acl_read(file)
+  #
+  # Returns nil if the file is a trivial file.
+  #
   def self.acl_read(file)
     num = acl(file, GETACLCNT, 0, nil)
 
@@ -85,6 +59,19 @@ class File
     arr
   end
 
+  # Reads ACL information for the current file. Returns an array of ACLStruct's
+  # that contain three members each:
+  #
+  # - acl_type (String)
+  # - acl_id   (Integer)
+  # - acl_perm (Integer)
+  #
+  # Example:
+  #
+  #    file#acl_read
+  #
+  # Returns nil if the file is a trivial file.
+  #
   def acl_read
     num = facl(fileno, GETACLCNT, 0, nil)
 
@@ -114,6 +101,17 @@ class File
     arr
   end
 
+  # Returns a textual representation of the ACL for the given file.
+  # If the file is a trivial file, nil is returned instead.
+  #
+  # Example:
+  #
+  #  File.acl_read_text(file)
+  #
+  #  Sample output:
+  #
+  #  'user::rw-,user:nobody:r--,group::r--,group:sys:r--,mask:r--,other:r--'
+  #
   def self.acl_read_text(file)
     num = acl(file, GETACLCNT, 0, nil)
 
@@ -136,6 +134,17 @@ class File
     text
   end
 
+  # Returns a textual representation of the ACL for the current file.
+  # If the file is a trivial file, nil is returned instead.
+  #
+  # Example:
+  #
+  #  file#acl_read_text
+  #
+  #  Sample output:
+  #
+  #  'user::rw-,user:nobody:r--,group::r--,group:sys:r--,mask:r--,other:r--'
+  #
   def acl_read_text
     num = facl(fileno, GETACLCNT, 0, nil)
 
@@ -158,6 +167,16 @@ class File
     text
   end
 
+  # Sets the ACL for the given file using +text+. The +text+ argument is a
+  # human readable ACL text string.
+  #
+  # If the text is invalid then a ArgumentError is raised, and in most
+  # cases the offending entry number will be identified.
+  #
+  # Example:
+  #
+  #   File.acl_write_text(file, text)
+  #
   def self.acl_write_text(file, text)
     pnum = FFI::MemoryPointer.new(:int)
     pwhich = FFI::MemoryPointer.new(:int)
@@ -183,6 +202,16 @@ class File
     text
   end
 
+  # Sets the ACL for the current file using +text+. The +text+ argument is a
+  # human readable ACL text string.
+  #
+  # If the text is invalid then a ArgumentError is raised, and in most
+  # cases the offending entry number will be identified.
+  #
+  # Example:
+  #
+  #   file#acl_write_text(text)
+  #
   def acl_write_text(text)
     pnum = FFI::MemoryPointer.new(:int)
     pwhich = FFI::MemoryPointer.new(:int)
@@ -208,6 +237,9 @@ class File
     text
   end
 
+  # Returns true if the given file is a trivial file, i.e. has no additional ACL
+  # entries. Otherwise, it returns false.
+  #
   def self.trivial?(file)
     num = acl(file, GETACLCNT, 0, nil)
 
@@ -216,6 +248,9 @@ class File
     num == MIN_ACL_ENTRIES
   end
 
+  # Returns true if the current file is a trivial file, i.e. has no additional ACL
+  # entries. Otherwise, it returns false.
+  #
   def trivial?
     num = facl(fileno, GETACLCNT, 0, nil)
 
@@ -224,6 +259,9 @@ class File
     num == MIN_ACL_ENTRIES
   end
 
+  # Returns the number of ACL entries for the given file. Returns 0 if the file
+  # is a trivial file.
+  #
   def self.acl_count(file)
     num = acl(file, GETACLCNT, 0, nil)
 
@@ -232,6 +270,9 @@ class File
     num == MIN_ACL_ENTRIES ? 0 : num
   end
 
+  # Returns the number of ACL entries for the current file. Returns 0 if the file
+  # is a trivial file.
+  #
   def acl_count
     num = facl(fileno, GETACLCNT, 0, nil)
 
@@ -240,6 +281,13 @@ class File
     num == MIN_ACL_ENTRIES ? 0 : num
   end
 
+  # Resolves all symbolic links in the given path.  All "." components are
+  # removed, as well as all nonleading ".." components and their preceding
+  # directory component.
+  #
+  # If leading ".." components resolve to the root directory, they are
+  # replaced by "/".
+  #
   def self.resolvepath(file)
     ptr = FFI::MemoryPointer.new(:char, 1024)
 
@@ -250,20 +298,25 @@ class File
     ptr.read_string
   end
 
+  # Returns true if the given file is door file, false otherwise.
+  #--
+  # Door files are special files used for interprocess communication between
+  # a client and server.
+  #
   def self.door?(file)
-    File.stat(file).mode & 0xF000 == 0xd000
+    File.stat(file).door?
   end
 
+  # The same as the default ftype method, except that "door" is returned
+  # if the file is a door file.
+  #
   def self.ftype(file)
-    if door?(file)
-      "door"
-    else
-      ftype_orig(file)
-    end
+    File.stat(file).ftype
   end
 
   private
 
+  # Convert a numeric error code into a human readable string.
   def self.aclcheck_string(val, int)
     base_string = "Invalid entry: #{int} - "
 
@@ -289,6 +342,7 @@ class File
     end
   end
 
+  # Convert a numeric acl type to a human readable string.
   def self.acl_type_string(num)
     case num
       when USER, USER_OBJ
