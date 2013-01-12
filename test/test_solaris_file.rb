@@ -143,21 +143,28 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_raise(TypeError){ File.trivial?(1) }
   end
 
-=begin
-
-  def test_singleton_acl_count
+  test "acl_count singleton method basic functionality" do
     assert_respond_to(File, :acl_count)
     assert_nothing_raised{ File.acl_count(@@file1) }
     assert_kind_of(Fixnum, File.acl_count(@@file1))
   end
 
-  def test_singleton_acl_count_expected_errors
+  test "acl_count singleton method returns the expected value" do
+    assert_equal(0, File.acl_count(@@file1))
+    assert_equal(6, File.acl_count(@@file2))
+  end
+
+  test "acl_count singleton method raises an error if the argument is invalid" do
     assert_raise(Errno::ENOENT){ File.acl_count('bogus') }
-    assert_raise(ArgumentError){ File.acl_count('bogus' * 500) }
+    assert_raise(Errno::ENAMETOOLONG){ File.acl_count('bogus' * 500) }
+  end
+
+  test "acl_count singleton method requires a single string argument" do
     assert_raise(ArgumentError){ File.acl_count }
     assert_raise(TypeError){ File.acl_count(1) }
   end
 
+=begin
   def test_singleton_realpath_basic
     assert_respond_to(File, :realpath)
     assert_nothing_raised{ File.realpath(@dir) }

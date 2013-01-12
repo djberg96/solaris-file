@@ -133,6 +133,14 @@ class File
     num == MIN_ACL_ENTRIES
   end
 
+  def self.acl_count(file)
+    num = acl(file, GETACLCNT, 0, nil)
+
+    raise SystemCallError.new('acl', FFI.errno) if num < 0
+
+    num == MIN_ACL_ENTRIES ? 0 : num
+  end
+
   private
 
   def self.aclcheck_string(val, int)
