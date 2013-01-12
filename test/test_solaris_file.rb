@@ -184,24 +184,29 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_raise(ArgumentError){ File.realpath }
     assert_raise(TypeError){ File.realpath(1) }
   end
+=end
 
-  def test_singleton_resolvepath_basic
+  test "resolvepath singleton method basic functionality" do
     assert_respond_to(File, :resolvepath)
     assert_nothing_raised{ File.resolvepath(@dir) }
     assert_kind_of(String, File.resolvepath(@dir))
   end
 
-  def test_singleton_resolvepath
+  test "resolvepath singleton method returns the expected value" do
     assert_equal(@dir, File.resolvepath(@dir))
     assert_equal("../examples", File.resolvepath("../examples"))
   end
 
-  def test_singleton_resolvepath_expected_errors
+  test "resolvepath singleton method raises an error if the argument is invalid" do
     assert_raise(Errno::ENOENT){ File.resolvepath('bogus') }
+  end
+
+  test "resolvepath requires a single string argument" do
     assert_raise(ArgumentError){ File.resolvepath }
     assert_raise(TypeError){ File.resolvepath(1) }
   end
 
+=begin
   def test_singleton_is_door_basic
     assert_respond_to(File, :door?)
     assert_nothing_raised{ File.door?(@door) }

@@ -39,6 +39,7 @@ class File
   ACLStruct = Struct.new('ACLStruct', :acl_type, :acl_id, :acl_perm)
 
   attach_function :acl, [:string, :int, :int, :pointer], :int
+  attach_function :resolvepath_c, :resolvepath, [:string, :pointer, :ulong], :int
 
   ffi_lib :sec
 
@@ -139,6 +140,16 @@ class File
     raise SystemCallError.new('acl', FFI.errno) if num < 0
 
     num == MIN_ACL_ENTRIES ? 0 : num
+  end
+
+  def self.resolvepath(file)
+    ptr = FFI::MemoryPointer.new(:char, 1024)
+
+    if resolvepath_c(file, ptr, ptr.size) < 0
+      raise SystemCallError.new('resolvepath', FFI.errno)
+    end
+
+    ptr.read_string
   end
 
   private
