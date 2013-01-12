@@ -102,17 +102,26 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_raise(TypeError){ File.acl_read_text(1) }
   end
 
-=begin
-  def test_singleton_acl_write_text
+  test "acl_write_text singleton method basic functionality" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
-    acl_text = 'user::rw-,group::r--,mask:r--,other:---'
+    acl_text = 'user::rw-,group::rw-,mask:r--,other:---'
     assert_respond_to(File, :acl_write_text)
     assert_nothing_raised{ File.acl_write_text(@@file1, acl_text) }
+    assert_kind_of(String, File.acl_write_text(@@file1, acl_text))
   end
 
-  def test_singleton_acl_write_text_expected_errors
-    assert_raise(File::SolarisError){ File.acl_write_text(@@file1, 'bogus') }
+  test "acl_write_text singleton method works as expected" do
+    acl_text = 'user::rw-,group::rw-,mask:r--,other:---'
+    assert_equal(acl_text, File.acl_write_text(@@file1, acl_text))
+    #assert_equal(acl_text, File.acl_read_text(@@file1))
   end
+
+  test "acl_write_text singleton method if text is invalid" do
+    assert_raise(ArgumentError){ File.acl_write_text(@@file1, 'bogus') }
+    assert_raise_message('invalid ACL text'){ File.acl_write_text(@@file1, 'bogus') }
+  end
+
+=begin
 
   def test_singleton_acl_trivial_basic
     assert_respond_to(File, :trivial?)
