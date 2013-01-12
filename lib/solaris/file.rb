@@ -152,6 +152,10 @@ class File
     ptr.read_string
   end
 
+  def self.door?(file)
+    File.stat(file).mode & 0xF000 == 0xd000
+  end
+
   private
 
   def self.aclcheck_string(val, int)

@@ -206,23 +206,26 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_raise(TypeError){ File.resolvepath(1) }
   end
 
-=begin
-  def test_singleton_is_door_basic
+  test "door? singleton method basic functionality" do
     assert_respond_to(File, :door?)
     assert_nothing_raised{ File.door?(@door) }
     assert_boolean(File.door?(@door))
   end
 
-  def test_singleton_is_door
+  test "door? singleton method returns the expected result" do
     assert_true(File.door?(@door))
     assert_false(File.door?(Dir.pwd))
   end
 
-  def test_singleton_is_door_expected_errors
+  test "door? singleton method raises an error if the argument is invalid" do
     assert_raise(Errno::ENOENT){ File.door?('bogus') }
+  end
+
+  test "door? singleton method requires a single string argument" do
     assert_raise(ArgumentError){ File.door? }
     assert_raise(TypeError){ File.door?(1) }
   end
+=begin
 
   def test_singleton_ftype_basic
     assert_respond_to(File, :ftype)
