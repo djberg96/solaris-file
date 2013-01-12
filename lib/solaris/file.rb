@@ -30,6 +30,10 @@ class File
 
   attach_function :acl, [:string, :int, :int, :pointer], :int
 
+  ffi_lib :sec
+
+  attach_function :acltotext, [:pointer, :int], :string
+
   # The version of the solaris-file library
   SOLARIS_VERSION = '0.4.0'
 
@@ -60,6 +64,28 @@ class File
     end
 
     arr
+  end
+
+  def self.acl_read_text(file)
+    num = acl(file, GETACLCNT, 0, nil)
+
+    if num < 0
+      raise SystemCallError.new('acl', FFI.errno)
+    end
+
+    text = nil
+
+    if num != MIN_ACL_ENTRIES
+      ptr = FFI::MemoryPointer.new(AclEnt.new, num)
+
+      if acl(file, GETACL, num, ptr) < 0
+        raise SystemCallError.new('acl', FFI.errno)
+      end
+
+      text = acltotext(ptr, num)
+    end
+
+    text
   end
 
   private

@@ -76,25 +76,33 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_raise(TypeError){ File.acl_read(1) }
   end
 
-=begin
-  def test_singleton_acl_read_text_basic
+  test "acl_read_text singleton method basic functionality" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_respond_to(File, :acl_read_text)
     assert_nothing_raised{ File.acl_read_text(@@file1) }
   end
 
-  def test_singleton_acl_read_text
+  test "acl_read_text singleton method returns expected type of value" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_nil(File.acl_read_text(@@file1))
-    assert_kind_of(String,File.acl_read_text(@@file2))
+    assert_kind_of(String, File.acl_read_text(@@file2))
+    assert_equal(@@acl_text, File.acl_read_text(@@file2))
   end
 
-  def test_singleton_acl_read_text_expected_errors
-    assert_raise(Errno::ENOENT){ File.acl_read_text('bogus') }
+  test "acl_read_text singleton method requires a single argument only" do
     assert_raise(ArgumentError){ File.acl_read_text }
+    assert_raise(ArgumentError){ File.acl_read_text(@@file1, @@file2) }
+  end
+
+  test "acl_read_text singleton method raises an error if the argument is invalid" do
+    assert_raise(Errno::ENOENT){ File.acl_read_text('bogus') }
+  end
+
+  test "acl_read_text singleton method requires a string argument" do
     assert_raise(TypeError){ File.acl_read_text(1) }
   end
 
+=begin
   def test_singleton_acl_write_text
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     acl_text = 'user::rw-,group::r--,mask:r--,other:---'
