@@ -243,7 +243,6 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_raise(ArgumentError){ File.ftype }
     assert_raise(TypeError){ File.ftype(1) }
   end
-=begin
 
   # INSTANCE METHODS
 
@@ -280,7 +279,7 @@ class TC_Solaris_File < Test::Unit::TestCase
   end
 
   def test_instance_acl_write_text_expected_errors
-    assert_raise(File::SolarisError){ @handle2.acl_write_text('bogus') }
+    assert_raise(ArgumentError){ @handle2.acl_write_text('bogus') }
     assert_raise(ArgumentError){ @handle2.acl_write_text }
     assert_raise(TypeError){ @handle2.acl_write_text(1) }
   end
@@ -318,7 +317,6 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_respond_to(@stat, :ftype)
     assert_equal('door', @stat.ftype)
   end
-=end
 
   def teardown
     @handle1.close unless @handle1.closed?

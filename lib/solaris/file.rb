@@ -39,6 +39,7 @@ class File
   ACLStruct = Struct.new('ACLStruct', :acl_type, :acl_id, :acl_perm)
 
   attach_function :acl, [:string, :int, :int, :pointer], :int
+  attach_function :facl, [:int, :int, :int, :pointer], :int
   attach_function :resolvepath_c, :resolvepath, [:string, :pointer, :ulong], :int
 
   ffi_lib :sec
@@ -84,6 +85,35 @@ class File
     arr
   end
 
+  def acl_read
+    num = facl(fileno, GETACLCNT, 0, nil)
+
+    if num < 0
+      raise SystemCallError.new('facl', FFI.errno)
+    end
+
+    arr = nil
+
+    if num != MIN_ACL_ENTRIES
+      ptr = FFI::MemoryPointer.new(AclEnt.new, num)
+
+      if facl(fileno, GETACL, num, ptr) < 0
+        raise SystemCallError.new('facl', FFI.errno)
+      end
+
+      arr = []
+
+      num.times{ |i|
+        ent = AclEnt.new(ptr[i])
+        arr << ACLStruct.new(
+          self.class.acl_type_string(ent[:a_type]), ent[:a_id], ent[:a_perm]
+        )
+      }
+    end
+
+    arr
+  end
+
   def self.acl_read_text(file)
     num = acl(file, GETACLCNT, 0, nil)
 
@@ -97,6 +127,28 @@ class File
       ptr = FFI::MemoryPointer.new(AclEnt.new, num)
 
       if acl(file, GETACL, num, ptr) < 0
+        raise SystemCallError.new('acl', FFI.errno)
+      end
+
+      text = acltotext(ptr, num)
+    end
+
+    text
+  end
+
+  def acl_read_text
+    num = facl(fileno, GETACLCNT, 0, nil)
+
+    if num < 0
+      raise SystemCallError.new('facl', FFI.errno)
+    end
+
+    text = nil
+
+    if num != MIN_ACL_ENTRIES
+      ptr = FFI::MemoryPointer.new(AclEnt.new, num)
+
+      if facl(fileno, GETACL, num, ptr) < 0
         raise SystemCallError.new('acl', FFI.errno)
       end
 
@@ -131,6 +183,31 @@ class File
     text
   end
 
+  def acl_write_text(text)
+    pnum = FFI::MemoryPointer.new(:int)
+    pwhich = FFI::MemoryPointer.new(:int)
+
+    ptr = aclfromtext(text, pnum)
+
+    if ptr.null?
+      raise ArgumentError, "invalid ACL text"
+    end
+
+    num = pnum.read_int
+
+    val = aclcheck(ptr, num, pwhich)
+
+    if val != 0
+      raise ArgumentError, aclcheck_string(val, pwhich.read_int)
+    end
+
+    if facl(fileno, SETACL, num, ptr) < 0
+      raise SystemCallError.new('facl', FFI.errno)
+    end
+
+    text
+  end
+
   def self.trivial?(file)
     num = acl(file, GETACLCNT, 0, nil)
 
@@ -139,10 +216,26 @@ class File
     num == MIN_ACL_ENTRIES
   end
 
+  def trivial?
+    num = facl(fileno, GETACLCNT, 0, nil)
+
+    raise SystemCallError.new('facl', FFI.errno) if num < 0
+
+    num == MIN_ACL_ENTRIES
+  end
+
   def self.acl_count(file)
     num = acl(file, GETACLCNT, 0, nil)
 
     raise SystemCallError.new('acl', FFI.errno) if num < 0
+
+    num == MIN_ACL_ENTRIES ? 0 : num
+  end
+
+  def acl_count
+    num = facl(fileno, GETACLCNT, 0, nil)
+
+    raise SystemCallError.new('facl', FFI.errno) if num < 0
 
     num == MIN_ACL_ENTRIES ? 0 : num
   end
