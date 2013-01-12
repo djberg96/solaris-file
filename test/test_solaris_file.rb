@@ -225,22 +225,25 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_raise(ArgumentError){ File.door? }
     assert_raise(TypeError){ File.door?(1) }
   end
-=begin
 
-  def test_singleton_ftype_basic
+  test "ftype singleton method is still defined" do
     assert_respond_to(File, :ftype)
   end
 
-  def test_singleton_ftype
+  test "overridden ftype singleton method returns expected value" do
     assert_equal('door', File.ftype(@door))
     assert_equal('directory', File.ftype(Dir.pwd))
   end
 
-  def test_singleton_ftype_expected_errors
+  test "ftype singleton method raises an error if the argument is invalid" do
     assert_raise(Errno::ENOENT){ File.ftype('bogus') }
+  end
+
+  test "ftype singleton method requires a single string argument" do
     assert_raise(ArgumentError){ File.ftype }
     assert_raise(TypeError){ File.ftype(1) }
   end
+=begin
 
   # INSTANCE METHODS
 

@@ -50,6 +50,11 @@ class File
   # The version of the solaris-file library
   SOLARIS_VERSION = '0.4.0'
 
+  class << self
+    alias ftype_orig ftype
+    remove_method :ftype
+  end
+
   def self.acl_read(file)
     num = acl(file, GETACLCNT, 0, nil)
 
@@ -154,6 +159,14 @@ class File
 
   def self.door?(file)
     File.stat(file).mode & 0xF000 == 0xd000
+  end
+
+  def self.ftype(file)
+    if door?(file)
+      "door"
+    else
+      ftype_orig(file)
+    end
   end
 
   private
