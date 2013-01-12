@@ -5,10 +5,7 @@
 # via the 'rake test' task. Note that many tests will be skipped unless you're
 # on a UFS filesystem.
 ###############################################################################
-require 'rubygems'
-gem 'test-unit'
-
-require 'test/unit'
+require 'test-unit'
 require 'solaris/file'
 require 'sys/filesystem'
 
@@ -41,30 +38,45 @@ class TC_Solaris_File < Test::Unit::TestCase
   end
 
   def test_version
-    assert_equal('0.3.7', File::SOLARIS_VERSION)
+    assert_equal('0.4.0', File::SOLARIS_VERSION)
   end
 
   # SINGLETON METHODS
 
-  def test_singleton_acl_read_basic
+  test "acl_read singleton method basic functionality" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_respond_to(File, :acl_read)
     assert_nothing_raised{ File.acl_read(@@file1) }
   end
 
-  def test_singleton_acl_read
+  test "acl_read singleton method works as expected" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_nil(File.acl_read(@@file1))
     assert_kind_of(Array, File.acl_read(@@file2))
+    assert_kind_of(Struct::ACLStruct, File.acl_read(@@file2).first)
   end
 
-  def test_singleton_acl_read_expected_errors
-    assert_raise(Errno::ENOENT){ File.acl_read('bogus') }
-    assert_raise(ArgumentError){ File.acl_read('bogus' * 500) }
+  test "acl_read singleton method returns expected struct values" do
+    struct = File.acl_read(@@file2).first
+    assert_equal('user', struct.acl_type)
+    assert_equal(100, struct.acl_id)
+    assert_equal(6, struct.acl_perm)
+  end
+
+  test "acl_read singleton method requires a single argument" do
     assert_raise(ArgumentError){ File.acl_read }
+    assert_raise(ArgumentError){ File.acl_read(@@file1, @@file2) }
+  end
+
+  test "acl_read singleton method raises an error if the file is not found" do
+    assert_raise(Errno::ENOENT){ File.acl_read('bogus') }
+  end
+
+  test "acl_read singleton method requires a string argument" do
     assert_raise(TypeError){ File.acl_read(1) }
   end
 
+=begin
   def test_singleton_acl_read_text_basic
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_respond_to(File, :acl_read_text)
@@ -168,7 +180,7 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_nothing_raised{ File.door?(@door) }
     assert_boolean(File.door?(@door))
   end
-   
+
   def test_singleton_is_door
     assert_true(File.door?(@door))
     assert_false(File.door?(Dir.pwd))
@@ -268,6 +280,7 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_respond_to(@stat, :ftype)
     assert_equal('door', @stat.ftype)
   end
+=end
 
   def teardown
     @handle1.close unless @handle1.closed?
