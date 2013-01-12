@@ -121,26 +121,29 @@ class TC_Solaris_File < Test::Unit::TestCase
     assert_raise_message('invalid ACL text'){ File.acl_write_text(@@file1, 'bogus') }
   end
 
-=begin
-
-  def test_singleton_acl_trivial_basic
+  test "trivial? singleton method basic functionality" do
     assert_respond_to(File, :trivial?)
     assert_nothing_raised{ File.trivial?(@@file1) }
     assert_boolean(File.trivial?(@@file1))
   end
 
-  def test_singleton_acl_trivial
+  test "trivial? singleton method returns the expected value" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_true(File.trivial?(@@file1))
     assert_false(File.trivial?(@@file2))
   end
 
-  def test_singleton_acl_trivial_expected_errors
+  test "trivial? singleton method raises an error if the argument is invalid" do
     assert_raise(Errno::ENOENT){ File.trivial?('bogus') }
-    assert_raise(ArgumentError){ File.trivial?('bogus' * 500) }
+    assert_raise(Errno::ENAMETOOLONG){ File.trivial?('bogus' * 500) }
+  end
+
+  test "trivial? singleton method requires a single string argument" do
     assert_raise(ArgumentError){ File.trivial? }
     assert_raise(TypeError){ File.trivial?(1) }
   end
+
+=begin
 
   def test_singleton_acl_count
     assert_respond_to(File, :acl_count)

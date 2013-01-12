@@ -125,6 +125,14 @@ class File
     text
   end
 
+  def self.trivial?(file)
+    num = acl(file, GETACLCNT, 0, nil)
+
+    raise SystemCallError.new('acl', FFI.errno) if num < 0
+
+    num == MIN_ACL_ENTRIES
+  end
+
   private
 
   def self.aclcheck_string(val, int)
