@@ -28,7 +28,7 @@
 
   Please report any other issues on the home page at:
 
-  https://github.com/djberg96/solaris-file
+  http://www.github.com/djberg96/solaris-file
    
 == Future Plans
   Add acl_write methods that accept an array of ACLStruct's.

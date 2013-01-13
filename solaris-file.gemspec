@@ -1,4 +1,4 @@
-require 'rubyspecs'
+require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'solaris-file'
@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.description = <<-EOF
     The solaris-file library provides Solaris-specific access control
     methods to the File class. It also provides methods for identifying
-    trivial and door files, interfaces for the realpath() and resolvepath()
-    functions, and an overloaded ftype method.
+    trivial and door files, an interfaces for the resolvepath()
+    function, and an overloaded ftype method.
   EOF
 end

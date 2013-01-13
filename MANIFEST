@@ -3,7 +3,10 @@
 * README
 * Rakefile
 * solaris-file.gemspec
+* lib/solaris/file.rb
+* lib/solaris/file/constants.rb
+* lib/solaris/file/functions.rb
+* lib/solaris/file/stat.rb
+* lib/solaris/file/structs.rb
 * examples/example_solaris_file.rb
-* ext/solaris/sfile.c
-* ext/solaris/sfile.h
 * test/test_solaris_file.rb
