@@ -246,75 +246,92 @@ class TC_Solaris_File < Test::Unit::TestCase
 
   # INSTANCE METHODS
 
-  def test_instance_acl_basic
+  test "acl_read instance method basic functionality" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_respond_to(@handle1, :acl_read)
     assert_nothing_raised{ @handle1.acl_read }
   end
 
-  def test_instance_acl
+  test "acl_read instance method works as expected" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_nil(@handle1.acl_read)
     assert_kind_of(Array, @handle2.acl_read)
     assert_kind_of(Struct::ACLStruct, @handle2.acl_read.first)
   end
 
-  def test_instance_acl_read_text_basic
+  test "acl_read instance method does not accept any arguments" do
+    assert_raise(ArgumentError){ @handle1.acl_read('test.txt') }
+  end
+
+  test "acl_read_text instance method dbasic functionality" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_respond_to(@handle1, :acl_read_text)
     assert_nothing_raised{ @handle1.acl_read_text }
   end
 
-  def test_instance_acl_read_text
+  test "acl_read_text instance method returns expected value" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_nil(@handle1.acl_read_text)
     assert_kind_of(String, @handle2.acl_read_text)
   end
 
-  def test_instance_acl_write_text
+  test "acl_write_text instance method basic functionality" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     acl_text = 'user::rw-,group::r--,mask:r--,other:---'
     assert_respond_to(@handle2, :acl_write_text)
     assert_nothing_raised{ @handle2.acl_write_text(acl_text) }
   end
 
-  def test_instance_acl_write_text_expected_errors
-    assert_raise(ArgumentError){ @handle2.acl_write_text('bogus') }
+  test "acl_write_text instance method requires a single string argument" do
     assert_raise(ArgumentError){ @handle2.acl_write_text }
     assert_raise(TypeError){ @handle2.acl_write_text(1) }
   end
 
-  def test_instance_acl_trivial_basic
+  test "acl_write_text instance method requires a valid acl string" do
+    assert_raise(ArgumentError){ @handle2.acl_write_text('bogus') }
+  end
+
+  test "trivial? instance method basic functionality" do
     assert_respond_to(@handle1, :trivial?)
     assert_nothing_raised{ @handle1.trivial? }
     assert_boolean(@handle1.trivial?)
   end
 
-  def test_instance_acl_trivial
+  test "trivial? instance method returns the expected value" do
     assert_true(@handle1.trivial?)
     assert_false(@handle2.trivial?)
   end
 
-  def test_instance_acl_count_basic
+  test "acl_count instance method basic functionality" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_respond_to(@handle1, :acl_count)
     assert_nothing_raised{ @handle1.acl_count }
     assert_kind_of(Fixnum, @handle1.acl_count)
   end
 
-  def test_instance_acl_count
+  test "acl_count instance method returns the expected value" do
     omit_unless(@@ufs, 'skipped on non-ufs filesystem')
     assert_equal(0, @handle1.acl_count)
     assert_equal(6, @handle2.acl_count)
   end
 
-  def test_stat_door
+  test "door? instance method basic functionality" do
     assert_respond_to(@stat, :door?)
+    assert_nothing_raised{ @stat.door? }
+    assert_boolean(@stat.door?)
+  end
+
+  test "door? instance method returns the expected value" do
     assert_true(@stat.door?)
   end
 
-  def test_stat_ftype
+  test "ftype instance method basic functionality" do
     assert_respond_to(@stat, :ftype)
+    assert_nothing_raised{ @stat.ftype }
+    assert_kind_of(String, @stat.ftype)
+  end
+
+  test "ftype instance method returns the expected value" do
     assert_equal('door', @stat.ftype)
   end
 

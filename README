@@ -21,16 +21,21 @@
   File.door?("/var/run/syslog_door") # => true
   File.ftype("/var/run/syslog_door") # => 'door'
 
-== Known Bugs
-  None that I am aware of. Please report any bugs using the tracker on the
-  project page at http://www.rubyforge.org/projects/solarisutils
+== Known Issues
+  Although this libary uses FFI, the instance methods will probably not work
+  when using JRuby because of the underlying use of file descriptors. However,
+  the singleton methods should work.
+
+  Please report any other issues on the home page at:
+
+  https://github.com/djberg96/solaris-file
    
 == Future Plans
   Add acl_write methods that accept an array of ACLStruct's.
   Add support for extended file attributes.
    
 == Copyright
-  (C) 2005-2011 Daniel J. Berger
+  (C) 2005-2013 Daniel J. Berger
   All Rights Reserved
     
 == Warranty

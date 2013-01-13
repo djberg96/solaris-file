@@ -1,4 +1,4 @@
-== 0.4.0 - ???
+== 0.4.0 - 13-Jan-2013
 * Converted to FFI.
 * Removed the File.realpath method since it is now already defined in
   Ruby 1.9 and later.

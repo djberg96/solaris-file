@@ -1,11 +1,13 @@
 require 'ffi'
 require File.join(File.dirname(__FILE__), 'file', 'stat')
 require File.join(File.dirname(__FILE__), 'file', 'constants')
+require File.join(File.dirname(__FILE__), 'file', 'structs')
 require File.join(File.dirname(__FILE__), 'file', 'functions')
 
 class File
   include Solaris::Constants
   include Solaris::Functions
+  include Solaris::Structs
   extend Solaris::Functions
 
   # The version of the solaris-file library
