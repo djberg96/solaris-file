@@ -1,8 +1,8 @@
 require 'ffi'
-require File.join(File.dirname(__FILE__), 'file', 'stat')
-require File.join(File.dirname(__FILE__), 'file', 'constants')
-require File.join(File.dirname(__FILE__), 'file', 'structs')
-require File.join(File.dirname(__FILE__), 'file', 'functions')
+require_relative 'file/stat'
+require_relative 'file/constants'
+require_relative 'file/structs'
+require_relative 'file/functions'
 
 class File
   include Solaris::Constants
@@ -11,7 +11,7 @@ class File
   extend Solaris::Functions
 
   # The version of the solaris-file library
-  SOLARIS_VERSION = '0.4.0'
+  SOLARIS_VERSION = '0.4.1'
 
   # We redefine the ftype method later.
   class << self
