@@ -11,7 +11,7 @@ class File
   extend Solaris::Functions
 
   # The version of the solaris-file library
-  SOLARIS_VERSION = '0.4.1'
+  SOLARIS_VERSION = '0.4.2'
 
   # We redefine the ftype method later.
   class << self
