@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'solaris-file'
-  spec.version    = '0.4.1'
+  spec.version    = '0.4.2'
   spec.author     = 'Daniel J. Berger'
   spec.license    = 'Artistic 2.0'
   spec.email      = 'djberg96@gmail.com'
@@ -10,6 +10,7 @@ Gem::Specification.new do |spec|
   spec.summary    = 'ACL and other methods for the File class on Solaris'
   spec.test_file  = 'test/test_solaris_file.rb'
   spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
+  spec.cert_chain = Dir['certs/*']
 
   spec.extra_rdoc_files = [
     'README',
