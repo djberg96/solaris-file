@@ -1,3 +1,8 @@
+== 0.4.2 - 18-Dec-2015
+* This gem is now signed.
+* The gem tasks in the Rakefile now assume Rubygems 2.x.
+* Added a solaris-file.rb file convenience.
+
 == 0.4.1 - 2-Nov-2014
 * Minor updates to the Rakefile and gemspec.
 
